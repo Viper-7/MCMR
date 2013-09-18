@@ -1,0 +1,16 @@
+[
+{
+	"modid": "BII",
+	"name": "BlockItemInfo",
+	"description": "Block/Item Discovery Mod",
+	"version": "@VERSION@",
+	"url": "",
+	"updateUrl": "",
+	"authorList": [ "Viper_796" ],
+	"credits": "",
+	"logoFile": "",
+	"screenshots": [],
+	"parent": "",
+	"dependencies": []
+}
+]
