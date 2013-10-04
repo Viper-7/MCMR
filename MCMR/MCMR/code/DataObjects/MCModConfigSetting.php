@@ -3,10 +3,10 @@ class MCModConfigSetting extends DataObject {
 	public static $db = array(
 		'Section' => 'Varchar',
 		'Name' => 'Varchar',
-		'Type' => "Enum('String','Int','Double','Boolean')",
+		'Type' => "Varchar",
 		'DefaultValue' => 'Varchar',
 		'InGameName' => 'Varchar',
-		'IDRange' => 'Integer',
+		'IDRange' => 'Int',
 	);
 	
 	public static $has_one = array(
@@ -22,12 +22,20 @@ class MCModConfigSetting extends DataObject {
 			return range($id, $id + $this->IDRange);
 		}
 	}
+	
+	public function isValid($value) {
+		return true;
+	}
 }
 
 class MCModConfigBlock extends MCModConfigSetting {
-
+	public function isValid($value) {
+		return parent::isValid($value) && $value->Value && $value->Value < 4096;
+	}
 }
 
 class MCModConfigItem extends MCModConfigSetting {
-
+	public function isValid($value) {
+		return parent::isValid($value) && $value->Value && $value->Value > 4096;
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 class MCModArchive extends File {
-	public static $belongs_to = array(
+	public static $has_one = array(
 		'ModVersion' => 'MCModVersion',
 	);
 }

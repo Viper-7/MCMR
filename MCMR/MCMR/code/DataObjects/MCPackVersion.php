@@ -16,7 +16,7 @@ class MCPackVersion extends DataObject {
 			$mod_list[] = $version;
 			
 			foreach($version->getDependencies($mod_list) as $dependency) {
-				if(!in_array($dependency->ModVersion, $mod_list)
+				if(!in_array($dependency->ModVersion, $mod_list))
 					$mod_list[] = $dependency;
 			}
 		}
@@ -27,16 +27,17 @@ class MCPackVersion extends DataObject {
 		
 		foreach($this->getAllModVersions() as $mod) {
 			foreach($mod->Config()->Settings() as $setting) {
-				
-				$existing = DataObject::get('MCPackModConfigSetting', 'PackVersionID = ' . intval($this->ID) . ' AND ConfigSettingID = ' . intval($setting->ID));
+				/*
+				$existing = DataObject::get('MCModConfigSettingValue', 'PackVersionID = ' . intval($this->ID) . ' AND ConfigSettingID = ' . intval($setting->ID));
 				
 				if(!$existing->Count()) {
-					$new = new MCPackModConfigSetting()
+					$new = new MCModConfigSettingValue()
 					$new->PackVersion = $this
 					$new->ConfigSetting = $setting
 					$new->Value = $setting->DefaultValue;
 					$new->write();
 				}
+				*/
 			}
 		}
 	}

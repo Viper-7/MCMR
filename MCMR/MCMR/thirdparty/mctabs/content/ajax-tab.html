@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head><title>Ajax Bookmark</title></head>
+<body>
+    <div id="fragment1">
+        <h2>Page Fragment</h2>
+        <p>The content comes from the page ajax-tab.html. It is the page fragment within the CSS selector "fragment1".</p>
+        <p><img src="content/tab-4.jpg" alt="" /></p>
+    </div>
+    <div id="fragment2">
+        <h2>Ajax Bookmark</h2>
+        <img src="content/tab-2.jpg" alt="" style="float:right; margin-left:20px;" />
+        <p>This panel has been updated by an Ajax Bookmark.</p>
+        <p>The new content comes from the page ajax-tab.html. It is the page fragment within the CSS selector "fragment2".</p>
+    </div>
+    <div id="fragment3">
+        <h2>onSelectTab event</h2>
+        <p>You can perform extra tasks by the <em>onSelectTab</em> event handler.</p>
+        <p><img src="content/tab-3.jpg" alt="" /></p>
+        <div class="code"><pre>function onTabSelect(index, targetElm, tabberId) {
+    if (tabberId == "tabs1") {
+        var span1 = document.getElementById("span1");
+        span1.innerHTML = "Index " + index + " of " + tabberId + 
+        ", Content count: " + targetElm.innerHTML.length;
+        var img1 = document.getElementById("img1");
+        img1.src = "content/tabs-" + index + ".jpg";
+    }
+}</pre></div>
+    </div>
+    <div id="fragment4">
+        <h2>Proin et dolor ligula</h2>
+        <img src="content/tab-1.jpg" alt="" />
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>McTabs Basic</title>
+    <link href="generic-notForMcTabs.css" rel="stylesheet" type="text/css" />
+    <link href="template1/mctabs.css" rel="stylesheet" type="text/css" />
+    <script src="javascript-tabs.js" type="text/javascript"></script>
+</head>
+<body class="bd1">
+    <div id="demopage">
+        <h1>McTabs</h1>
+        <p id="menu1">
+            <a href="demo1.html" class="active">1. McTabs</a>
+            <a href="demo2.html">2. Multiple</a>
+            <a href="demo3.html">3. Ajax Tabs</a>
+            <a href="demo4.html">4. Dynamic</a>
+        </p>
+        <div class="container1">
+            <ul id="tabs1" class="mctabs">
+                <li><a href="#view1">Persistence</a></li>
+                <li><a href="#view2">Multiple or nested</a></li>
+                <li><a href="#view3"><img src="content/pre-icon.png" alt="" /> Bookmark</a></li>
+            </ul>
+            <div class="panel-container">
+                <div id="view1">
+                    <h2>Persistence</h2>
+                    <p>Setting {persist: true} in the McTabs script will turn on the <strong>persistence</strong> feature: 
+                    the most recently clicked tab will be remembered even if the page is reloaded or revisited within the browser session.</p>
+                    <p> </p>
+                    <br /><img src="content/tab-1.jpg" alt="" />
+                    <p><br /><b>Note:</b></p>
+                    <p class="small">If you open this page directly by local path instead of through HTTP on a web or localhost server, you may not see the persistence.
+                    </p>
+                </div>
+                <div id="view2">
+                    <h2>Multiple Tabs</h2>
+                    <img src="content/tab-2.jpg" alt="" style="float:right; margin-left:20px;" />
+                    <p>You can have multiple McTabs on the same page, with only one copy of the CSS and JavaScript files.</p>
+                    <p><strong>Nested tabs</strong> are also supported.</p>
+                
+                </div>
+                <div id="view3">
+                    <h2>Bookmark Support</h2>
+                    <p>Tab can also be opened via a bookmark anchor located anywhere on the page.</p>
+                    <p id="mark3" style="background:#FFC; border:1px dotted red;padding:8px;">This is a paragraph with id="mark3".</p>
+                    <p>By clicking the bookmark link <i>mark3</i> below, you will navigate to the paragraph above even if this tab is not selected before clicking the bookmark.</p>
+                    <p class="small"><b>Note:</b> the bookmark target is &lt;p id="mark3"&gt; that is an element within this content panel &lt;div id="view3"&gt;&lt;/div&gt;.</p>
+                    <p><img src="content/tab-5.jpg" alt="" /></p>
+                </div>
+            </div>
+            <br />
+            <p>Test bookmarks: <a href="#view2" data-scroll="false">view2</a> &nbsp; <a href="#mark3">mark3</a></p>
+        </div>
+    </div>
+</body>
+</html>

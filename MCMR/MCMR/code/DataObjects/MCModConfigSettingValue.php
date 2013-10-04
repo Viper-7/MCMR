@@ -4,12 +4,25 @@ class MCModConfigSettingValue extends DataObject {
 		'Value' => 'Varchar',
 	);
 	
-	public static $belongs_to = array(
+	public static $has_one = array(
 		'ConfigSetting' => 'MCModConfigSetting',
+		'PackMod' => 'MCPackMod',
+		'ConfigPack' => 'MCModConfigPack',
 	);
 	
 	public function validate() {
-		switch($this->ConfigSetting()->Type) {
+		// Need either a PackMod or ConfigPack attached
+		if(!$this->PackModID && !$this->ConfigPackID)
+			return false;
+		
+		$setting = $this->ConfigSetting();
+		
+		// Run setting specific validation rules
+		if(!$setting->isValid($this))
+			return false;
+		
+		// Check data type
+		switch($setting->Type) {
 			case 'Int':
 				return $this->Value == intval($this->Value);
 			case 'Double':

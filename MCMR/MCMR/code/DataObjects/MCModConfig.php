@@ -1,4 +1,20 @@
 <?php
+class MCModConfigPack extends DataObject {
+	public static $db = array(
+		'Name' => 'Varchar',
+	);
+	
+	public static $has_one = array(
+		'Config' => 'MCModConfig',
+		'Author' => 'Member',
+		'ModVersion' => 'MCModVersion',
+	);
+	
+	public static $has_many = array(
+		'Values' => 'MCModConfigSettingValue',
+	);
+}
+
 class MCModConfig extends DataObject {
 	public static $db = array(
 		'Name' => 'Varchar',
@@ -9,27 +25,29 @@ class MCModConfig extends DataObject {
 		'HasItems' => 'Boolean',
 	);
 	
-	public static $belongs_to = array(
+	public static $has_one = array(
 		'ModVersion' => 'MCModVersion',
-		'PackMod' => 'MCPackMod',
 	);
 	
 	public static $has_many = array(
 		'Settings' => 'MCModConfigSetting',
+		'ConfigPack' => 'MCModConfigPack',
+		'PackMod' => 'MCPackMod',
 	);
 	
-	public static $extensions = array(
-		'Hierarchy',
-	);
+	public function generate($values) {
+		$settings = array();
+		
+		foreach($values as $value) {
+			$setting = $value->ConfigSetting();
+			$settings[$setting->Section][$setting->Name] = $value->Value;
+		}
+		
+		return MCConfigParser::update($this->Content, $settings);
+	}
 	
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		
-		if(!$this->Content) {
-			if($this->ParentID) {
-				$this->Content = $this->Parent()->Content
-			}
-		}
 		
 		$settings = MCConfigParser::parse($this->Content);
 		
@@ -38,7 +56,6 @@ class MCModConfig extends DataObject {
 				$setting = DataObject::get_one('MCModConfigSetting', 
 					'Section=\'' . Convert::raw2sql($section) . '\''
 					. ' AND Name=\'' . Convert::raw2sql($name) . '\''
-					. ' AND ConfigID=' . intval($this->ID)
 				);
 				
 				if(!$setting) {
@@ -71,7 +88,25 @@ class MCModConfig extends DataObject {
 					$setting->DefaultValue = $value[1];
 					$setting->write();
 				}
+				
+				$this->HasBlocks = $this->HasItems = false;
+				
+				if($setting instanceof MCModConfigBlock)
+					$this->HasBlocks = true;
+				
+				if($setting instanceof MCModConfigItem)
+					$this->HasItems = true;
 			}
+		}
+		
+				
+		foreach($this->Settings() as $setting) {
+			$val = DataObject::get_one('MCModConfigSettingValue', 'ConfigSettingID=' . intval($setting->ID));
+			
+			$val = new MCModConfigSettingValue();
+			$val->Value = $setting->DefaultValue;
+			$val->ConfigSetting = $setting;
+			$val->write();
 		}
 	}
 }

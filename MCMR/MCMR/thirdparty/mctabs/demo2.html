@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>McTabs Multiple</title>
+    <link href="generic-notForMcTabs.css" rel="stylesheet" type="text/css" />
+    <link href="template2/mctabs.css" rel="stylesheet" type="text/css" />
+    <script src="javascript-tabs.js" type="text/javascript"></script>
+</head>
+<body class="bd1">
+    <div id="demopage">
+        <h1>Multiple/Nested McTabs</h1>
+        <p id="menu1">
+            <a href="demo1.html">1. McTabs</a>
+            <a href="demo2.html" class="active">2. Multiple</a>
+            <a href="demo3.html">3. Ajax Tabs</a>
+            <a href="demo4.html">4. Dynamic</a>
+        </p>
+
+        <ul id="tabs1" class="mctabs">
+            <li><a href="#view1">Multiple or Nested</a></li>
+            <li><a href="#view2">Auto Advance</a></li>
+        </ul>
+        <div class="panel-container">
+            <div id="view1">               
+                <h3>Multiple McTabs</h3>
+                <p>You can have multiple McTabs on a page, either nested or unnested.</p>
+                <br />                
+                <ul id="tabs2" class="mctabs" data-options="{autoAdvance:3.5}">
+                    <li><a href="#view2-1">Subtab A</a></li>
+                    <li><a href="#view2-2">Subtab B</a></li>
+                </ul>        
+                <div class="panel-container" style="border:2px solid #CCC; border-radius:5px;">
+                    <div id="view2-1" style="padding:30px;">
+                        <h3>Using diffent templates for each McTabs</h3>
+                        <img src="content/tabs-0.jpg" alt="" style="float:left;margin-right:14px;" />
+                        <p><b>Ask</b>: I have multiple McTabs on the same page. Can I show them in different styles (templates)?</p>
+                        <p><b>Answer</b>: Visit the first item under the FAQ: Styles and Templates section on www.menucool.com/jquery-tabs</p>
+                    </div>
+                    <div id="view2-2" style="padding:30px;">
+                        CSS rules:
+                        <ul>
+                            <li>If multiple selectors apply to the same element, the one with higher specificity wins.</li>
+                            <li>Inline styles have the highest priority.</li>
+                            <li>ID selectors have a higher specificity than class selectors.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="view2">
+                <h3>autoAdvance</h3>                
+                <p>The autoAdvance option in the script can be set to integer or decimal number specifying the interval in seconds for auto advance. Set to 0 to disable the auto advance.</p>
+                <p>The auto advance will be delayed when the mouse is hovering over the content panel.</p>
+                <p class="smaller">If you want to cancel the auto advance when one of the tabs is manually selected, you can add ".001" to the autoAdvance value. For example: 3.001.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,29 +1,26 @@
 <?php
+class InvalidModException extends Exception {}
+
 class MCModVersion extends DataObject {
 	public static $db = array(
 		'MajorVersion' => 'Int',
 		'MinorVersion' => 'Int',
 		'PatchVersion' => 'Int',
-		'LiveDate' => 'DateTime',
 	);
 	
 	public static $has_one = array(
 		'Config' => 'MCModConfig',
+		'Mod' => 'MCMod',
 	);
 	
 	public static $has_many = array(
-		'ConfigSets' => 'MCModConfigSet',
 		'Archives' => 'MCModArchive',
-		'Dependencies' => 'MCModDependency',
+		'PackMods' => 'MCPackMod',
 	);
 	
-	public static $belongs_to = array(
-		'Mod' => 'MCMod',
-		'Dependants' => 'MCModDependency',
-	);
-	
-	public static $belongs_many_many = array(
-		'Packs' => 'MCPack'
+	public static $many_many = array(
+		'DependsOn' => 'MCModVersion',
+		'ConflictsWith' => 'MCModVersion',
 	);
 	
 	public static $default_sort = 'MajorVersion DESC, MinorVersion DESC, PatchVersion DESC';
@@ -34,7 +31,8 @@ class MCModVersion extends DataObject {
 	}
 
 	public function compare(MCModVersion $version) {
-		if($version->ModID != $this->ModID) return false;
+		if($version->ModID != $this->ModID)
+			throw new InvalidModException('Attempted to compare versions of different mods');
 		
 		switch(true) {
 			case $this->MajorVersion < $version->MajorVersion:
@@ -58,12 +56,12 @@ class MCModVersion extends DataObject {
 		$dependency_list = array();
 		
 		foreach($this->Dependencies as $dependency) {
-			if(in_array($dependency->DependsOn, $dependency_list)) continue;
+			if(in_array($dependency, $dependency_list)) continue;
 			
-			$dependency_list[] = $dependency->DependsOn;
-			$dependency_list = array_merge($dependency_list, $dependency->DependsOn->getDependencies($dependency_list));
+			$dependency_list[] = $dependency;
+			$dependency_list = array_merge($dependency_list, $dependency->getDependencies($dependency_list));
 		}
 		
-		return $dependency_list;
+		return array_unique($dependency_list);
 	}
 }

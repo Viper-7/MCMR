@@ -1,0 +1,88 @@
+﻿/* McTabs - menucool.com */
+
+ul.mctabs
+{
+    height:28px; /* height #1 */
+    text-align:left; /*set to left, center, or right to align the tabs as desired*/ 
+    margin:0;
+    padding:0; 
+    padding-left:20px; /*offset of the first tab when text-align is left.*/
+    font-size:0;
+    list-style-type:none;
+}
+        
+ul.mctabs li
+{
+    display:inline;
+    margin:0;padding:0;
+    margin-right:2px; /*distance between tabs*/
+}
+        
+ul.mctabs li a
+{
+    padding:0 10px; /* edit 10px for different tab width */
+    display:inline-block;    
+    font:bold 12px Verdana;
+    line-height:28px;/* height #1 */
+    text-decoration: none;
+    color:#888;
+    border:2px solid transparent;
+    border-bottom:none;
+    background:white;
+    outline:none;
+    border-radius:5px 5px 0 0;
+    position:relative;
+}
+        
+ul.mctabs li a:link, ul.mctabs li a:visited
+{
+    color:#888;
+}
+        
+ul.mctabs li a:hover
+{
+    border-color: transparent;
+    background:white; /*color #2*/
+    color:#333;
+}
+  
+/*selected tab style */
+ul.mctabs li.selected a
+{
+    color:#333;
+    font-weight:bold;
+    border-color:#CCC; /*color #1*/
+    background:white; /*color #2*/
+    z-index:3;
+} 
+        
+/*selected tab style on hover */
+ul.mctabs li.selected a:hover
+{
+    text-decoration:none;
+    color:black;
+}
+
+/* container of content panels */
+div.panel-container
+{
+    border:none;
+    border-top:2px solid #CCC; /*color #1*/
+    border-radius:0px; 
+    background-color:white; /*color #2*/
+    position:relative;    
+    padding:0px; margin:0px;
+}
+
+/* content panel */       
+div.panel-container > div
+{
+    padding:30px 0px; /*update it to: padding:30px; if you want the content to have a left and padding within the content panel. */
+    
+    /* The two settings below should not be changed. */
+    display: block;
+    margin:0px;
+}
+
+/* loading image before ajax content is retrieved. Only applicable when Ajax is used.*/
+div.ajaxLoading {background:transparent url(loading.gif) no-repeat center center; height:150px; font-size:0;padding:0; margin:0; }
