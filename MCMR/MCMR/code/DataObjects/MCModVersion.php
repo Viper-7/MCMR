@@ -25,9 +25,12 @@ class MCModVersion extends DataObject {
 	
 	public static $default_sort = 'MajorVersion DESC, MinorVersion DESC, PatchVersion DESC';
 	
-	public function Publish() {
-		$this->LiveDate = 'now';
-		$this->write();
+	public function getVersion() {
+		return "{$this->MajorVersion}.{$this->MinorVersion}.{$this->PatchVersion}";
+	}
+	
+	public function getIsCurrent() {
+		return $this->ID == $this->Mod()->CurrentVersionID;
 	}
 
 	public function compare(MCModVersion $version) {

@@ -1,10 +1,4 @@
 <?php
-class MCVersion extends DataObject {
-	public static $db = array(
-		'Title' => 'Varchar',
-	);
-}
-
 class MCPack extends DataObject {
 	public static $db = array(
 		'Title' => 'Varchar',
@@ -21,16 +15,12 @@ class MCPack extends DataObject {
 	);
 	
 	public static $has_many = array(
-		'Versions' => 'MCPackVersions',
+		'Versions' => 'MCPackVersion',
 	);
 	
 	public static $many_many = array(
 		'Mods' => 'MCMod',
 	);
-	
-	public function getMCVersion() {
-		return array('Title' => '1.6.4');
-	}
 	
 	public function getPackImage() {
 		$icon = $this->PackIcon();
@@ -60,24 +50,14 @@ class MCPack extends DataObject {
 	public function findOrMakeCurrentVersion() {
 		if($this->CurrentVersion) return $this->CurrentVersion;
 		
-		$errors = array();
 		$version = new MCPackVersion();
-		$version->Pack = $this;
+		$version->PackID = $this->ID;
+		$version->write();
 		
-		foreach($this->Mods as $mod) {
-			$release = null;
-			
-			try {
-				$release = $mod->getCurrentRelease();
-			} catch (Exception $e) {
-				$errors[] = $e->getMessage();
-			}
+		foreach($this->Mods() as $mod) {
+			$release = $mod->getLatestVersion();
 			
 			$version->ModVersions()->add($release);
-		}
-		
-		if($errors) {
-			throw new Exception(implode(', ', $errors));
 		}
 	}
 }

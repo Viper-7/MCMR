@@ -55,14 +55,29 @@ class Packs_Controller extends Page_Controller {
 		Requirements::themedCSS('typography'); 
 		Requirements::themedCSS('form'); 
 	}
+	
+	public function index($request) {
+		$this->PackID = $request->param('ID');
+		
+		return $this;
+	}
+	
+	public function Pack() {
+		return DataObject::get_by_id('MCPack', $this->PackID);
+	}
 
     public function CreatePackForm() {
+		
+		if(!Member::currentUserID()) {
+			return Director::redirect('Security/Login?BackURL=' . $this->Link() . 'CreatePack');
+		}
+		
         $fields = new FieldList(
-            new TextField('Name'),
+            new TextField('Title'),
 			new OptionsetField('MCVersion', 'Minecraft Version', DataObject::get('MCVersion')->Map()),
-			$f = new UploadField('PackImage', 'Pack Icon')
+			$f = new UploadField('PackIcon', 'Pack Icon (96x96)')
         );
-        
+		
 		$f->getValidator()->setAllowedExtensions(array('jpg', 'gif', 'png'));
 		
         $actions = new FieldList(
@@ -73,24 +88,36 @@ class Packs_Controller extends Page_Controller {
     }
 
 	public function ChooseModsForm() {
+		if(empty($_SESSION['pack_state']) || $_SESSION['pack_state'] < 1)
+			return Director::redirect('home/packs');
+		
+		$mcversion = DataObject::get_by_id('MCVersion', $_SESSION['pack_data'][0]['MCVersion']);
+		
         $fields = new FieldList(
-            new CheckboxSetField('Mods', 'Mods included in this pack', DataObject::get('MCMod')->Map())
+            new CheckboxSetField('Mods', 'Mods included in this pack', $mcversion->Mods()->Map())
         );
          
         $actions = new FieldList(
-            new FormAction('doChooseMods', 'Build Pack')
+            new FormAction('doChooseMods', 'Select Versions')
         );
      
         return new Form($this, 'ChooseModsForm', $fields, $actions);
 	}
 	
 	public function BuildPackForm() {
-        $fields = new FieldList(
-            new Object()
-        );
-         
+		if(empty($_SESSION['pack_state']) || $_SESSION['pack_state'] < 2)
+			return Director::redirect('home/packs');
+		
+        $fields = new FieldList();
+		
+		$mods = $_SESSION['pack_data'][1]['Mods'];
+		foreach($mods as $mod_id) {
+			$mod = DataObject::get_by_id('MCMod', $mod_id);
+			$fields->push(new DropdownField('ModVersion[' . $mod_id . ']', $mod->Title, $mod->Versions()->Map('ID', 'Version')));
+        }
+		
         $actions = new FieldList(
-            new FormAction('doBuildPack', 'Save Pack')
+            new FormAction('doBuildPack', 'Build Pack')
         );
      
         return new Form($this, 'BuildPackForm', $fields, $actions);
@@ -104,19 +131,53 @@ class Packs_Controller extends Page_Controller {
 		}
 	}
 	
-	public function doCreatePack($request) {
+	public function doCreatePack($data) {
 		$_SESSION['pack_state'] = 1;
-		
+		$_SESSION['pack_data'] = array($data);
+		Director::redirect('home/packs/ChooseMods');
 	}
 	
-	public function doChooseMods($request) {
+	public function doChooseMods($data) {
 		$_SESSION['pack_state'] = 2;
-	
+		$_SESSION['pack_data'][1] = $data;
+
+		Director::redirect('home/packs/BuildPack');
 	}
 	
-	public function doBuildPack($request) {
-		$_SESSION['pack_state'] = 3;
-	
+	public function doBuildPack($data) {
+		$_SESSION['pack_state'] = 0;
+		$_SESSION['pack_data'][2] = $data;
+
+		$data = $_SESSION['pack_data'];
+		
+		$pack = new MCPack();
+		$pack->Title = $data[0]['Title'];
+		$pack->MCVersionID = $data[0]['MCVersion'];
+		$pack->AuthorID = Member::currentUserID();
+		// Image
+		$pack->write();
+		
+		$mods = array();
+		foreach($data[1]['Mods'] as $mod_id) {
+			$mod = DataObject::get_by_id('MCMod', $mod_id);
+			$pack->Mods()->add($mod);
+			$mods[$mod_id] = $mod_id;
+		}
+		
+		$version = new MCPackVersion();
+		$version->PackID = $pack->ID;
+		$version->write();
+		
+		foreach($data[2]['ModVersion'] as $mod_id => $mod_version_id) {
+			unset($mods[$mod_id]);
+			$packmod = new MCPackMod();
+			$packmod->PackVersionID = $version->ID;
+			$packmod->ModVersionID = $mod_version_id;
+			$packmod->write();
+			$packmod->buildConfig();
+		}
+
+		Director::redirect('pack/' . $pack->ID . '/version/' . $version->ID);
 	}
 	
 	public function Client($request) {

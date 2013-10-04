@@ -1,4 +1,22 @@
+header .inner .Account {
+	float: right;
+	color: #666;
+}
+
+header .inner .Account a, header .inner .Account a:visited, header .inner .Account a:active, header .inner .Account a:hover {
+	color: #eee;
+}
+
 div.pack {
+	width: 780px;
+	padding: 10px;
+	margin: 0px;
+	height: 106px;
+	border: 1px solid #000;
+	margin-bottom: 20px;
+}
+
+div.mod {
 	width: 780px;
 	padding: 10px;
 	margin: 0px;
@@ -17,7 +35,7 @@ div.arrow img {
 	background: #000 !important;
 }
 
-div.create_pack {
+div.create_pack, div.create_mod {
 	float: right;
 	margin-top: 20px;
 }
@@ -33,51 +51,33 @@ div.sort_controls {
 	margin-bottom: 20px;
 }
 
-div.pack .label {
+div.pack .label, div.mod .label {
 	margin-right: 4px;
 }
-div.pack div.pack_image {
+
+div.pack_image, div.mod_image {
 	float: left;
 	margin-right: 20px;
 }
 
-div.pack div.pack_title {
+div.pack_item, div.mod_item {
+	float: left;
+	width: 180px;
+}
+
+div.pack div.pack_item.download, div.mod div.mod_item.download {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+div.pack div.pack_item.download a, div.mod div.mod_item.download a {
+	padding: 5px;
+	background-color: #ddd;
+}
+
+div.pack_title, div.mod_title {
 	text-align: center;
 	width: 100%;
 	height: 28px;
 	font-size: 18pt;
-}
-
-div.pack div.pack_mcversion {
-	float: left;
-	width: 180px;
-}
-
-div.pack div.pack_mods {
-	float: left;
-	width: 180px;
-}
-
-div.pack div.pack_author {
-	float: left;
-}
-
-div.pack div.pack_downloads {
-	float: left;
-	width: 180px;
-}
-
-div.pack div.pack_upvotes {
-	float: left;
-	width: 180px;
-}
-
-div.pack div.pack_downvotes {
-	float: left;
-	width: 180px;
-}
-
-div.pack div.pack_download {
-	float: left;
-	width: 180px;
 }

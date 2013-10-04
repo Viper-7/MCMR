@@ -1,11 +1,19 @@
 <?php
 class MCPackVersion extends DataObject {
+	public static $db = array(
+		'Version' => 'Int',
+	);
+	
 	public static $has_one = array(
 		'Pack' => 'MCPack',
 	);
 	
 	public static $has_many = array(
 		'Mods' => 'MCPackMod',
+	);
+	
+	public static $defaults = array(
+		'Version' => 1,
 	);
 	
 	public function getAllModVersions() {
@@ -20,6 +28,8 @@ class MCPackVersion extends DataObject {
 					$mod_list[] = $dependency;
 			}
 		}
+		
+		return $mod_list;
 	}
 	
 	public function onBeforeWrite() {

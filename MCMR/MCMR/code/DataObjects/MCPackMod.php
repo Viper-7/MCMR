@@ -9,4 +9,8 @@ class MCPackMod extends DataObject {
 	public static $has_many = array(
 		'ModConfigValue' => 'MCModConfigSettingValue',
 	);
+	
+	public function buildConfig() {
+	
+	}
 }
