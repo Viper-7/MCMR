@@ -58,6 +58,7 @@ class Packs_Controller extends Page_Controller {
 	
 	public function index($request) {
 		$this->PackID = $request->param('ID');
+		$this->dataRecord = DataObject::get_one('Packs');
 		
 		return $this;
 	}

@@ -55,6 +55,7 @@ class Mods_Controller extends Page_Controller {
 	
 	public function index($request) {
 		$this->ModID = $request->param('ID');
+		$this->dataRecord = DataObject::get_one('Mods');
 		
 		return $this;
 	}

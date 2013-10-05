@@ -25,6 +25,9 @@
 <body class="$ClassName<% if not $Menu(2) %> no-sidebar<% end_if %>">
 <% include Header %>
 <div class="main" role="main">
+	<% if IsDev %>
+		<div class="dev_warning">Development Server - Changes will not be stored!</div>
+	<% end_if %>
 	<div class="inner typography line">
 		 $Layout
 	</div>
