@@ -37,7 +37,7 @@
 			<% end_loop %>
 		<% else %>
 			<div class="create_pack">
-				<a href="home/packs/CreatePack">Create a New Pack</a>
+				<a href="{$Link}CreatePack">Create a New Pack</a>
 			</div>
 			<h1>$Title</h1>
 			<div class="sort_controls">

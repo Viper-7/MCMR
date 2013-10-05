@@ -22,7 +22,7 @@
 	<% require themedCSS('mcmr') %>
 	<link rel="shortcut icon" href="$ThemeDir/images/favicon.ico" />
 </head>
-<body class="$ClassName<% if not $Menu(2) %> no-sidebar<% end_if %>">
+<body class="$ClassName">
 <% include Header %>
 <div class="main" role="main">
 	<% if IsDev %>

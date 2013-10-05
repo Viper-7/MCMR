@@ -26,7 +26,7 @@
 			<% end_loop %>
 		<% else %>
 			<div class="create_mod">
-				<a href="home/mods/CreateMod">Add a Mod</a>
+				<a href="{$Link}CreateMod">Add a Mod</a>
 			</div>
 			<h1>$Title</h1>
 			<div class="content">
