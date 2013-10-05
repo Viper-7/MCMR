@@ -113,7 +113,7 @@ class Packs_Controller extends Page_Controller {
 		$mods = $_SESSION['pack_data'][1]['Mods'];
 		foreach($mods as $mod_id) {
 			$mod = DataObject::get_by_id('MCMod', $mod_id);
-			$fields->push(new DropdownField('ModVersion[' . $mod_id . ']', $mod->Title, $mod->Versions()->Map('ID', 'Version')));
+			$fields->push(new DropdownField('ModVersion[' . $mod_id . ']', $mod->Title, $mod->Versions()->Map('ID', 'VersionString')));
         }
 		
         $actions = new FieldList(

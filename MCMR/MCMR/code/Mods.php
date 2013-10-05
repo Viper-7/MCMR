@@ -31,6 +31,10 @@ class Mods_Controller extends Page_Controller {
 	public static $allowed_actions = array (
 		'UpVote',
 		'DownVote',
+		'CreateMod',
+		'UploadFiles',
+		'ResolveIDs',
+		'PublishMod',
 		'CreateModForm',
 		'UploadFilesForm',
 		'ResolveIDsForm',

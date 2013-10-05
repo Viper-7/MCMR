@@ -29,6 +29,21 @@ class MCModVersion extends DataObject {
 		return "{$this->MajorVersion}.{$this->MinorVersion}.{$this->PatchVersion}";
 	}
 	
+	public function getVersionString() {
+		$string = $this->getVersion();
+		
+		switch($this->compare($this->Mod()->CurrentVersion())) {
+			case 1:
+				$string .= " (beta)";
+				break;
+			case 0:
+				$string .= " (current)";
+				break;
+		}
+		
+		return $string;
+	}
+	
 	public function getIsCurrent() {
 		return $this->ID == $this->Mod()->CurrentVersionID;
 	}
