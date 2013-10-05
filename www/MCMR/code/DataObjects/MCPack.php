@@ -26,7 +26,7 @@ class MCPack extends DataObject {
 		$icon = $this->PackIcon();
 		if($icon->ID) return $icon;
 		
-		return DataObject::get_by_id('Image', 4);
+		return DataObject::get_one('Image', 'Name=\'no-image-icon.jpg\'');
 	}
 	
 	public function trackDownload() {

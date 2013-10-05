@@ -45,13 +45,12 @@ class MCModVersion extends DataObject {
 	}
 	
 	public function getIsCurrent() {
-		return $this->ID == $this->Mod()->CurrentVersionID;
+		$id = $this->Mod()->CurrentVersionID;
+		
+		return !$id || $this->ID == $id;
 	}
 
 	public function compare(MCModVersion $version) {
-		if($version->ModID != $this->ModID)
-			throw new InvalidModException('Attempted to compare versions of different mods');
-		
 		switch(true) {
 			case $this->MajorVersion < $version->MajorVersion:
 				return -1;

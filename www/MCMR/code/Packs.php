@@ -68,9 +68,8 @@ class Packs_Controller extends Page_Controller {
 
     public function CreatePackForm() {
 		
-		if(!Member::currentUserID()) {
+		if(!Member::currentUserID())
 			return Director::redirect('Security/Login?BackURL=' . $this->Link() . 'CreatePack');
-		}
 		
         $fields = new FieldList(
             new TextField('Title'),
@@ -134,14 +133,14 @@ class Packs_Controller extends Page_Controller {
 	public function doCreatePack($data) {
 		$_SESSION['pack_state'] = 1;
 		$_SESSION['pack_data'] = array($data);
-		Director::redirect('home/packs/ChooseMods');
+		$this->redirect('home/packs/ChooseMods');
 	}
 	
 	public function doChooseMods($data) {
 		$_SESSION['pack_state'] = 2;
 		$_SESSION['pack_data'][1] = $data;
 
-		Director::redirect('home/packs/BuildPack');
+		$this->redirect('home/packs/BuildPack');
 	}
 	
 	public function doBuildPack($data) {
@@ -177,7 +176,7 @@ class Packs_Controller extends Page_Controller {
 			$packmod->buildConfig();
 		}
 
-		Director::redirect('pack/' . $pack->ID . '/version/' . $version->ID);
+		$this->redirect('pack/' . $pack->ID . '/version/' . $version->ID);
 	}
 	
 	public function Client($request) {
@@ -198,12 +197,12 @@ class Packs_Controller extends Page_Controller {
 	public function UpVote($request) {
 		$pack = DataObject::get_by_id('MCPack', $request->param('ID'));
 		$pack->UpVote();
-		return Director::redirect('home/packs');
+		$this->redirect('home/packs');
 	}
 	
 	public function DownVote($request) {
 		$pack = DataObject::get_by_id('MCPack', $request->param('ID'));
 		$pack->DownVote();
-		return Director::redirect('home/packs');
+		$this->redirect('home/packs');
 	}
 }

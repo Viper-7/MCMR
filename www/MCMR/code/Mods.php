@@ -60,13 +60,20 @@ class Mods_Controller extends Page_Controller {
 	}
 	
     public function CreateModForm() {
+		if(!Member::currentUserID())
+			return $this->redirect('Security/Login?BackURL=' . $this->Link() . 'CreateMod');
+		
         $fields = new FieldList(
-            new TextField('Name'),
+            new TextField('Title'),
+			new TextareaField('Description'),
 			new CheckboxSetField('MCVersion', 'Minecraft Versions', DataObject::get('MCVersion')->Map()),
 			$f = new UploadField('ModIcon', 'Mod Icon (96x96)')
         );
         
-		$f->getValidator()->setAllowedExtensions(array('jpg', 'gif', 'png'));
+		$f->setAllowedFileCategories(array('image'));
+		$f->setAllowedMaxFileNumber(10);
+		$f->setCanPreviewFolder(false);
+		$f->setCanAttachExisting(false);
 		
         $actions = new FieldList( new FormAction('doCreateMod', 'Next Step') );
      
@@ -75,17 +82,38 @@ class Mods_Controller extends Page_Controller {
 	
 	public function UploadFilesForm() {
 		if(empty($_SESSION['mod_state']) || $_SESSION['mod_state'] < 1)
-			return Director::redirect('home/mods');
+			return $this->redirect('home/mods');
 
-		$field = new FieldList();
+		$fields = new FieldList();
+		foreach($_SESSION['mod_data'][0]['MCVersion'] as $version) {
+			$obj = DataObject::get_by_id('MCVersion', $version);
+			if($obj) {
+				$f = new FileField('ModArchive[' . $obj->ID . ']', $obj->Title . ' Jar');
+				$fields->push($f);
+			}
+		}
+		
+		$f = new UploadField('Screenshots');
+		$f->setAllowedFileCategories(array('image'));
+		$f->setAllowedMaxFileNumber(10);
+		$f->setCanPreviewFolder(false);
+		$f->setCanAttachExisting(false);
+		$fields->push($f);
+		
 		$actions = new FieldList( new FormAction('doUploadFiles', 'Next Step') );
-		return new Form($this, 'UploadFilesForm', $field, $actions);
+		return new Form($this, 'UploadFilesForm', $fields, $actions);
 	}
 	
 	public function ResolveIDsForm() {
 		if(empty($_SESSION['mod_state']) || $_SESSION['mod_state'] < 2)
-			return Director::redirect('home/mods');
+			return $this->redirect('home/mods');
 
+		foreach($_SESSION['mod_data'][1]['ModArchiveID'] as $archive_id) {
+			$archive = DataObject::get_by_id('MCModArchive', $archive_id);
+			
+			// ...
+		}
+		
 		$field = new FieldList();
 		$actions = new FieldList( new FormAction('doResolveIDs', 'Next Step') );
 		return new Form($this, 'ResolveIDsForm', $field, $actions);
@@ -93,35 +121,50 @@ class Mods_Controller extends Page_Controller {
 	
 	public function PublishModForm() {
 		if(empty($_SESSION['mod_state']) || $_SESSION['mod_state'] < 3)
-			return Director::redirect('home/mods');
+			return $this->redirect('home/mods');
 
 		$field = new FieldList();
 		$actions = new FieldList( new FormAction('doPublishMod', 'Finish') );
 		return new Form($this, 'PublishModForm', $field, $actions);
 	}
 	
-	public function doCreateMod($request) {
+	public function doCreateMod($data) {
 		$_SESSION['mod_state'] = 1;
-		$_SESSION['mod_data'][0] = $request->postVars();
+		$_SESSION['mod_data'][0] = $data;
 		
-		Director::redirect('home/mods/UploadFiles');
+		return $this->redirect('home/mods/UploadFiles');
 	}
 
-	public function doUploadFiles($request) {
+	public function doUploadFiles($data) {
 		$_SESSION['mod_state'] = 2;
-		$_SESSION['mod_data'][1] = $request->postVars();
-		Director::redirect('home/mods/ResolveIDs');
+		$_SESSION['mod_data'][1] = $data;
+		
+		foreach($data['ModArchive']['tmp_name'] as $mcversion => $name) {
+			if($name) {
+				$orgname = $data['ModArchive']['name'][$mcversion];
+				
+				$archive = new MCModArchive();
+				$archive->Filename = $orgname;
+				$archive->MCVersionID = $mcversion;
+				$archive->write();
+				
+				$_SESSION['mod_data'][1]['ModArchiveID'][$archive->ID] = $archive->ID;
+			}
+		}
+		
+		return $this->redirect('home/mods/ResolveIDs');
 	}
 	
-	public function doResolveIDs($request) {
+	public function doResolveIDs($data) {
 		$_SESSION['mod_state'] = 3;
-		$_SESSION['mod_data'][2] = $request->postVars();
-		Director::redirect('home/mods/PublishMod');
+		$_SESSION['mod_data'][2] = $data;
+		
+		return $this->redirect('home/mods/PublishMod');
 	}
 
-	public function doPublishMod($request) {
+	public function doPublishMod($data) {
 		$_SESSION['mod_state'] = 0;
-		$_SESSION['mod_data'][3] = $request->postVars();
+		$_SESSION['mod_data'][3] = $data;
 
 		$data = $_SESSION['mod_data'];
 		
@@ -129,7 +172,10 @@ class Mods_Controller extends Page_Controller {
 		$mod->AuthorID = Member::currentUserID();
 		$mod->Title = $data[0]['Title'];
 		$mod->Description = $data[0]['Description'];
-		// Image
+		foreach($_SESSION['mod_data'][0]['MCVersion'] as $version) {
+			$obj = DataObject::get_by_id('MCVersion', $version);
+			$mod->MCVersions()->add($obj);
+		}
 		$mod->write();
 
 		$version = new MCModVersion();
@@ -138,8 +184,14 @@ class Mods_Controller extends Page_Controller {
 		$version->MinorVersion = 0;
 		$version->PatchVersion = 0;
 		$version->write();
+
+		foreach($_SESSION['mod_data'][1]['ModArchiveID'] as $archive_id) {
+			$archive = DataObject::get_by_id('MCModArchive', $archive_id);
+			$archive->ModVersionID = $version->ID;
+			$archive->write();
+		}
 		
-		Director::redirect('mod/' . $mod->ID . '/version/' . $version->ID);
+		return $this->redirect('mod/' . $mod->ID . '/version/' . $version->ID);
 	}
 
 	public function Mod() {
@@ -149,12 +201,12 @@ class Mods_Controller extends Page_Controller {
 	public function UpVote($request) {
 		$mod = DataObject::get_by_id('MCMod', $request->param('ID'));
 		$mod->UpVote();
-		return Director::redirect('home/mods');
+		return $this->redirect('home/mods');
 	}
 	
 	public function DownVote($request) {
 		$mod = DataObject::get_by_id('MCMod', $request->param('ID'));
 		$mod->DownVote();
-		return Director::redirect('home/mods');
+		return $this->redirect('home/mods');
 	}
 }

@@ -50,24 +50,26 @@ class MCModConfig extends DataObject {
 		parent::onBeforeWrite();
 		
 		$settings = MCConfigParser::parse($this->Content);
+		$this->HasBlocks = $this->HasItems = false;
 		
 		foreach($settings as $section => $contents) {
 			foreach($contents as $name => $value) {
 				$setting = DataObject::get_one('MCModConfigSetting', 
 					'Section=\'' . Convert::raw2sql($section) . '\''
 					. ' AND Name=\'' . Convert::raw2sql($name) . '\''
+					. ' AND ConfigID=' . intval($this->ID)
 				);
 				
 				if(!$setting) {
-					if($section == 'block') {
+					if($section == 'block' && $value[0] == 'I') {
 						$setting = new MCModConfigBlock();
-					} elseif($section == 'item') {
+					} elseif($section == 'item' && $value[0] == 'I') {
 						$setting = new MCModConfigItem();
 					} else {
 						$setting = new MCModConfigSetting();
 					}
 					
-					$setting->Config = $this;
+					$setting->ConfigID = $this->ID;
 					$setting->Name = $name;
 					$setting->Section = $section;
 					
@@ -89,8 +91,6 @@ class MCModConfig extends DataObject {
 					$setting->write();
 				}
 				
-				$this->HasBlocks = $this->HasItems = false;
-				
 				if($setting instanceof MCModConfigBlock)
 					$this->HasBlocks = true;
 				
@@ -99,13 +99,14 @@ class MCModConfig extends DataObject {
 			}
 		}
 		
-				
 		foreach($this->Settings() as $setting) {
 			$val = DataObject::get_one('MCModConfigSettingValue', 'ConfigSettingID=' . intval($setting->ID));
 			
-			$val = new MCModConfigSettingValue();
+			if(!$val)
+				$val = new MCModConfigSettingValue();
+			
 			$val->Value = $setting->DefaultValue;
-			$val->ConfigSetting = $setting;
+			$val->ConfigSettingID = $setting->ID;
 			$val->write();
 		}
 	}

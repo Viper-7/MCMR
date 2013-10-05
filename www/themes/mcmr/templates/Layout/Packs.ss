@@ -2,7 +2,7 @@
 <div class="content-container unit size3of4 lastUnit">
 	<article>
 		<% if PackID %>
-			<% control Pack %>
+			<% loop Pack %>
 				Title: $Title<br/>
 				Posted On: $Created<br/>
 				Author: $Author.Surname<br/>
@@ -11,16 +11,16 @@
 				CurrentVersion: $CurrentVersion.Version<br/>
 				Mods: <div class="mods">
 					<ul>
-						<% control Mods %>
-							<li><a href="mod/$ID">$Title</a> ($CurrentVersion.Version)</li>
-						<% end_control %>
+						<% loop Mods %>
+							<li><a href="mod/$ID">$Title</a></li>
+						<% end_loop %>
 					</ul>
 				</div>
 				Versions: <div class="versions">
-					<% control Versions %>
+					<% loop Versions %>
 						<h2>$Version</h2>
 						<div class="mods">
-							<% control Mods %>
+							<% loop Mods %>
 								<span class="title">$ModVersion.Mod.Title</span>
 								<span class="version">($ModVersion.Version)</span>
 								<span class="author"> by $ModVersion.Mod.Author.Surname</span>
@@ -30,11 +30,11 @@
 									<span class="out_of_date">Out of Date</span>
 								<% end_if %>)
 								
-							<% end_control %>
+							<% end_loop %>
 						</div>
-					<% end_control %>
+					<% end_loop %>
 				</div>
-			<% end_control %>
+			<% end_loop %>
 		<% else %>
 			<div class="create_pack">
 				<a href="home/packs/CreatePack">Create a New Pack</a>
@@ -49,7 +49,7 @@
 				<span class="sort_option"><a href="#">Most Mods</a></span>
 			</div>
 			<div class="content">
-				<% control Packs %>
+				<% loop Packs %>
 					<div class="pack">
 						<div class="pack_image">$PackImage.PaddedImage(96,96)</div>
 						<div class="arrow"><a href="pack/$ID"><img src="themes/mcmr/images/right_arrow.png"></a></div>
@@ -69,7 +69,7 @@
 						
 						<div style="float: clear; clear: both"></div>
 					</div>
-				<% end_control %>
+				<% end_loop %>
 			</div>
 		<% end_if %>
 	</article>
